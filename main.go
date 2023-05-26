@@ -16,7 +16,7 @@ import (
 
 func main() {
 	if err := run(); err != nil {
-		log.Fatal()
+		log.Fatal(err)
 	}
 }
 
@@ -36,7 +36,14 @@ func run() error {
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
 
-	heartbeatRoutes := api.New()
+	apiCfg := api.HandlerConfig{
+		Logger: logger,
+	}
+
+	heartbeatRoutes, err := api.New(apiCfg)
+	if err != nil {
+		return err
+	}
 
 	//TODO: Configure read, write and idle timeouts
 	server := http.Server{
