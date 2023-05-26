@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/daniel-oliveiravas/heartbeat-service/foundation/logger"
+	"github.com/daniel-oliveiravas/heartbeat-service/foundation/logging"
 	"go.uber.org/zap"
 )
 
@@ -19,12 +19,12 @@ func run() error {
 		return err
 	}
 
-	log, err := logger.New(cfg.Service, cfg.Environment)
+	logger, err := logging.New(cfg.Service, cfg.Environment)
 	if err != nil {
 		return err
 	}
 
-	log.Info("starting service", zap.String("service", cfg.Service))
+	logger.Info("starting service", zap.String("service", cfg.Service))
 
 	return nil
 }
