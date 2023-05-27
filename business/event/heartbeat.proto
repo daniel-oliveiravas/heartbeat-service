@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option go_package = "./event";
+
+message Heartbeat {
+  string id = 1;
+  HeartbeatStatus status = 2;
+  string timestamp = 3;
+}
+
+enum HeartbeatStatus {
+  ONLINE = 0;
+  OFFLINE = 1;
+}

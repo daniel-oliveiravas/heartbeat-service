@@ -45,7 +45,14 @@ func run() error {
 		Addr: cfg.RedisAddress,
 	})
 	redisRepository := redis.NewRepository(redisClient, cfg.HeartbeatExpiry)
-	kafkaPublisher := kafka.NewPublisher()
+	publisherConfig := kafka.PublisherConfig{
+		TopicURL:       cfg.HeartbeatTopicURL,
+		KafkaAddresses: cfg.KafkaAddresses,
+	}
+	kafkaPublisher, err := kafka.NewPublisher(publisherConfig)
+	if err != nil {
+		return err
+	}
 	heartbeatUsecase := heartbeat.NewUsecase(logger, redisRepository, kafkaPublisher)
 
 	apiCfg := api.HandlerConfig{
