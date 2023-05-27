@@ -10,7 +10,11 @@ import (
 	"syscall"
 
 	"github.com/daniel-oliveiravas/heartbeat-service/app/api"
+	"github.com/daniel-oliveiravas/heartbeat-service/business/heartbeat"
+	"github.com/daniel-oliveiravas/heartbeat-service/business/heartbeat/integration/kafka"
+	"github.com/daniel-oliveiravas/heartbeat-service/business/heartbeat/integration/redis"
 	"github.com/daniel-oliveiravas/heartbeat-service/foundation/logging"
+	goredis "github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 )
 
@@ -36,8 +40,16 @@ func run() error {
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
 
+	//TODO: Configure redis timeouts and password
+	redisClient := goredis.NewClient(&goredis.Options{
+		Addr: cfg.RedisAddress,
+	})
+	redisRepository := redis.NewRepository(redisClient, cfg.HeartbeatExpiry)
+	kafkaPublisher := kafka.NewPublisher()
+	heartbeatUsecase := heartbeat.NewUsecase(logger, redisRepository, kafkaPublisher)
+
 	apiCfg := api.HandlerConfig{
-		Logger: logger,
+		HeartbeatUsecase: heartbeatUsecase,
 	}
 
 	heartbeatRoutes, err := api.New(apiCfg)

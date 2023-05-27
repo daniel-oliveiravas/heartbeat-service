@@ -1,28 +1,37 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/daniel-oliveiravas/heartbeat-service/business/heartbeat"
 	"github.com/julienschmidt/httprouter"
-	"go.uber.org/zap"
 )
 
 type HandlerConfig struct {
-	Logger *zap.Logger
+	HeartbeatUsecase HeartbeatUsecase
+}
+
+//go:generate mockery --name=HeartbeatUsecase --filename=heartbeat_usecase.go
+type HeartbeatUsecase interface {
+	Beat(ctx context.Context, heartbeat heartbeat.Heartbeat) error
 }
 
 type HeartbeatHandler struct {
-	heartbeatUsecase *heartbeat.Usecase
+	cfg HandlerConfig
 }
 
 func New(cfg HandlerConfig) (http.Handler, error) {
 	//TODO: Add repository and publisher to heartbeat
-	heartbeatUsecase := heartbeat.NewUsecase(cfg.Logger, nil, nil)
+
+	if cfg.HeartbeatUsecase == nil {
+		return nil, fmt.Errorf("missing configuration")
+	}
 
 	handler := &HeartbeatHandler{
-		heartbeatUsecase: heartbeatUsecase,
+		cfg: cfg,
 	}
 
 	router := httprouter.New()
@@ -44,7 +53,7 @@ func (h *HeartbeatHandler) heartbeatSignal(w http.ResponseWriter, r *http.Reques
 		w.Write([]byte("failed to read body"))
 	}
 
-	err := h.heartbeatUsecase.Beat(ctx, beat.toUsecase(identifier))
+	err := h.cfg.HeartbeatUsecase.Beat(ctx, beat.toUsecase(identifier))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("failed to read body"))

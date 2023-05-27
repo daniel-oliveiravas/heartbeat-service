@@ -14,6 +14,8 @@ type Config struct {
 	Environment     string        `default:"dev"`
 	Host            string        `default:":8080"`
 	ShutdownTimeout time.Duration `default:"10s"`
+	RedisAddress    string        `default:"localhost:6379"`
+	HeartbeatExpiry time.Duration `default:"30s"`
 }
 
 func loadConfig() (Config, error) {

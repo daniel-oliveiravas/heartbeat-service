@@ -8,6 +8,7 @@ import (
 
 type Repository interface {
 	Upsert(ctx context.Context, heartbeat Heartbeat) error
+	Get(ctx context.Context, id string) (Heartbeat, error)
 }
 
 type EventPublisher interface {
