@@ -57,6 +57,7 @@ func run() error {
 
 	apiCfg := api.HandlerConfig{
 		HeartbeatUsecase: heartbeatUsecase,
+		Logger:           logger,
 	}
 
 	heartbeatRoutes, err := api.New(apiCfg)

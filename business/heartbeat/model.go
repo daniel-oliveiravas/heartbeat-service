@@ -5,7 +5,7 @@ import (
 )
 
 type Heartbeat struct {
-	ID        string
-	Status    string
-	Timestamp time.Time
+	ID        string    `json:"id,omitempty"`
+	Status    string    `json:"status,omitempty"`
+	Timestamp time.Time `json:"timestamp"`
 }

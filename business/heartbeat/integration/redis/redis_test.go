@@ -24,7 +24,7 @@ func TestRepository(t *testing.T) {
 		Addr: "localhost:6379",
 	})
 
-	repo := redis.NewRepository(redisClient, time.Second*30)
+	repo := redis.NewRepository(redisClient, time.Hour*2)
 
 	beat := heartbeat.Heartbeat{
 		ID:        uuid.New().String(),

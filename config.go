@@ -15,7 +15,7 @@ type Config struct {
 	Host              string        `default:":8080"`
 	ShutdownTimeout   time.Duration `default:"10s"`
 	RedisAddress      string        `default:"localhost:6379"`
-	HeartbeatExpiry   time.Duration `default:"30s"`
+	HeartbeatExpiry   time.Duration `default:"1h"`
 	HeartbeatTopicURL string        `default:"heartbeat-events"`
 	KafkaAddresses    []string      `default:"localhost:9092"`
 }

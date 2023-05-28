@@ -40,3 +40,7 @@ func (u *Usecase) Beat(ctx context.Context, heartbeat Heartbeat) error {
 
 	return nil
 }
+
+func (u *Usecase) HeartbeatByID(ctx context.Context, id string) (Heartbeat, error) {
+	return u.Repository.Get(ctx, id)
+}
