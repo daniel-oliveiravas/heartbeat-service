@@ -40,9 +40,12 @@ func run() error {
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
 
-	//TODO: Configure redis timeouts and password
 	redisClient := goredis.NewClient(&goredis.Options{
-		Addr: cfg.RedisAddress,
+		Addr:         cfg.RedisAddress,
+		Username:     cfg.RedisUsername,
+		Password:     cfg.RedisPassword,
+		ReadTimeout:  cfg.RedisReadTimeout,
+		WriteTimeout: cfg.RedisWriteTimeout,
 	})
 	redisRepository := redis.NewRepository(redisClient, cfg.HeartbeatExpiry)
 	publisherConfig := kafka.PublisherConfig{
@@ -65,11 +68,12 @@ func run() error {
 		return err
 	}
 
-	//TODO: Configure read, write and idle timeouts
 	server := http.Server{
-		Addr:     cfg.Host,
-		Handler:  heartbeatRoutes,
-		ErrorLog: log.Default(),
+		Addr:         cfg.Host,
+		Handler:      heartbeatRoutes,
+		ErrorLog:     log.Default(),
+		WriteTimeout: cfg.ServerWriteTimeout,
+		ReadTimeout:  cfg.ServerReadTimeout,
 	}
 
 	serverErrors := make(chan error, 1)
@@ -88,7 +92,7 @@ func run() error {
 	case sig := <-shutdown:
 		logger.Info("shutting down service", zap.String("signal", sig.String()))
 		defer logger.Info("shutdown complete", zap.String("signal", sig.String()))
-		ctx, cancel := context.WithTimeout(context.Background(), cfg.ShutdownTimeout)
+		ctx, cancel := context.WithTimeout(context.Background(), cfg.ServerShutdownTimeout)
 		defer cancel()
 
 		if err = server.Shutdown(ctx); err != nil {
