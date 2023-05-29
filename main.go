@@ -49,7 +49,7 @@ func run() error {
 	})
 	redisRepository := redis.NewRepository(redisClient, cfg.HeartbeatExpiry)
 	publisherConfig := kafka.PublisherConfig{
-		TopicURL:       cfg.HeartbeatTopicURL,
+		TopicURL:       cfg.TopicURL,
 		KafkaAddresses: cfg.KafkaAddresses,
 	}
 	kafkaPublisher, err := kafka.NewPublisher(publisherConfig)

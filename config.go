@@ -10,20 +10,20 @@ import (
 const ConfigPrefix = "HEARTBEAT"
 
 type Config struct {
-	Service               string        `default:"HEARTBEAT"`
-	Environment           string        `default:"dev"`
-	Host                  string        `default:":8080"`
-	ServerShutdownTimeout time.Duration `default:"10s"`
-	ServerReadTimeout     time.Duration `default:"250ms"`
-	ServerWriteTimeout    time.Duration `default:"250ms"`
-	RedisAddress          string        `default:"localhost:6379"`
-	RedisUsername         string        `default:""`
-	RedisPassword         string        `default:""`
-	RedisReadTimeout      time.Duration `default:"250ms"`
-	RedisWriteTimeout     time.Duration `default:"250ms"`
-	HeartbeatExpiry       time.Duration `default:"1h"`
-	HeartbeatTopicURL     string        `default:"heartbeat-events"`
-	KafkaAddresses        []string      `default:"localhost:9092"`
+	Service               string        `split_words:"true" default:"HEARTBEAT"`
+	Environment           string        `split_words:"true" default:"dev"`
+	Host                  string        `split_words:"true" default:":8080"`
+	ServerShutdownTimeout time.Duration `split_words:"true" default:"10s"`
+	ServerReadTimeout     time.Duration `split_words:"true" default:"250ms"`
+	ServerWriteTimeout    time.Duration `split_words:"true" default:"250ms"`
+	RedisAddress          string        `split_words:"true" default:"localhost:6379"`
+	RedisUsername         string        `split_words:"true" default:""`
+	RedisPassword         string        `split_words:"true" default:""`
+	RedisReadTimeout      time.Duration `split_words:"true" default:"250ms"`
+	RedisWriteTimeout     time.Duration `split_words:"true" default:"250ms"`
+	HeartbeatExpiry       time.Duration `split_words:"true" default:"1h"`
+	TopicURL              string        `split_words:"true" default:"heartbeat-events"`
+	KafkaAddresses        []string      `split_words:"true" default:"localhost:9092"`
 }
 
 func loadConfig() (Config, error) {
